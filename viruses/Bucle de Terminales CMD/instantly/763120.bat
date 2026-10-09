@@ -1,3 +1,0 @@
-:bucle
-start
-goto bucle
