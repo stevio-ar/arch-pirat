@@ -1,0 +1,3 @@
+:bucle
+start
+goto bucle
