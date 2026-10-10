@@ -1,6 +1,0 @@
-Poner esto en powershell:
-
-$ws = New-Object -ComObject WScript.Shell
-$shortcut = $ws.CreateShortcut("$env:USERPROFILE\Desktop\MiAcceso.lnk")
-$shortcut.Description = "Este es mi texto personalizado"
-$shortcut.Save()
